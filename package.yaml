@@ -55,6 +55,7 @@ library:
   - lens-aeson
   - unordered-containers
   - containers
+  - utf8-string
 
 executables:
   my-servant-project-exe:
