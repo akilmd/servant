@@ -1,5 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE BinaryLiterals #-}
+{-# LANGUAGE TemplateHaskell #-}
+
 
 module LensWorking where
 
@@ -12,29 +14,50 @@ import qualified Accessor as A
 import Data.Maybe
 import Text.Read
 import Control.Lens
+    ( (&),
+      (^..),
+      (^?),
+      filtered,
+      folded,
+      has,
+      (^.),
+      ifolded,
+      asIndex,
+      non,
+      _Just,
+      _Left,
+      (%~),
+      (+~),
+      (.~),
+      (?~),
+      At(at),
+      Ixed(ix) )
 
 viewExamples :: IO()
 viewExamples = do
   let bob = User (UserName "Bob") 42 (Just (Pet (PetName "tomy") ) ) HM.empty
   let clmcc = CL.CLMCC True ["01" , "02"]
   -- view or ^. used to view tghe value
+  print $ _userName bob
   print  $ bob ^. A.userName
-  -- print $ bob ^. A.userScore
-  -- -- that ^? is used for Just type we can take the whole Just type by _just and it always return a just type.
-  -- print $ bob ^? A.userPet . _Just . A.petName -- Just (Pet {_petName = PetName "tomy"})
-  -- -- set or .~ it used to set the value
-  -- print $ bob
-  --  & A.userName .~ UserName "Akil"
-  --  & A.userScore .~ 20
-  --  & A.userPet ?~   Pet (PetName "tommy")
-  --  -- that ?. is used for Just return type.
-  --  -- over or %~ is use to update the value
-  -- print $ bob & A.userScore %~ (\sc -> sc+1 )
-  -- print $ bob & A.userScore %~ (+1)
-  -- print $ bob & A.userScore +~ 1
-  -- let bobWithTommy = bob & A.userPet . _Just . A.petName %~
-  --      (\ (PetName n)-> PetName ( DT.pack "Y" <> n) )
-  -- print $ bobWithTommy ^? A.userPet . _Just . A.petName
+  print $ bob ^. A.userScore
+  -- that ^? is used for Just type we can take the whole Just type by _just and it always return a just type.
+  print $ bob ^? A.userPet . _Just . A.petName -- Just (Pet {_petName = PetName "tomy"})
+  -- set or .~ it used to set the value
+  print $ bob
+   & A.userName .~ UserName "Akil"
+   & A.userScore .~ 20
+   & A.userPet ?~   Pet (PetName "tommy")
+   -- that ?. is used for Just return type.
+   -- over or %~ is use to update the value
+  print $ bob & A.userScore %~ (\sc -> sc+1 )
+  print $ bob & A.userScore %~ (+1)
+  print $ bob & A.userScore +~ 1
+  let bobWithTommy = bob & A.userPet . _Just . A.petName %~
+       (\ (PetName n)-> PetName ( DT.pack "Y" <> n) )
+      pet = Pet $ PetName "name"
+      bobWithTommy' = bob & A.userPet . _Just .~ pet
+  print $ bobWithTommy ^? A.userPet . _Just . A.petName
 
 -- >>> viewExamples
 -- <stderr>: hPutChar: invalid argument (cannot encode character '\8216')
